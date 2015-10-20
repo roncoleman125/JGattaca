@@ -1,4 +1,4 @@
-package gataca;
+package gattaca;
 
 /**
  * This interface defines when the GA terminates (i.e., "converges").

@@ -1,4 +1,4 @@
-package gataca;
+package gattaca;
 
 /**
  * This class implements the fitness calculator.

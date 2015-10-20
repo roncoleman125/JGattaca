@@ -1,4 +1,4 @@
-package gataca;
+package gattaca;
 
 import java.util.Random;
 
