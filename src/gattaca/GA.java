@@ -55,8 +55,10 @@ public class GA {
         System.out.println("Generations: " + generationCount);
         System.out.printf("Entropy: %4.1f\n",entropy);
         System.out.printf("MLR: %5.2f\n",population.getMaxLikenessRatio());
-        System.out.println("Genes:");
-        System.out.println(population.getFittest());
+        
+        Individual fittest = population.getFittest();
+        System.out.println("Genes (len = "+fittest.getChromosome().length()+"):");
+        System.out.println(fittest);
     }
     
     private static Boolean isConverged(Population p,Terminator t) {
