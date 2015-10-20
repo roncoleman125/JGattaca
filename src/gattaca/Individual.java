@@ -42,6 +42,8 @@ public class Individual {
      * @return char representing the gene
      */
     public char getGene(int index) {
+        assert(index >= 0 && index < CHROMOSOME_LENGTH);
+        
         return chromosome.charAt(index);
     }
 
@@ -51,6 +53,8 @@ public class Individual {
      * @param gene 
      */
     public void setGene(int index, char gene) {
+        assert(index >= 0 && index < CHROMOSOME_LENGTH);
+        
         chromosome.setCharAt(index, gene);
         fitness = 0;
     }

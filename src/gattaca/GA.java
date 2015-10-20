@@ -17,14 +17,19 @@ public class GA {
     private final static Double TERMINAL_ENTROPY = 2.0;
     private final static Double TERMINAL_LIKENESS = 0.70;
     
-    // Convergence conditions
+    // Possible onvergence conditions
     private final static Terminator USE_ENTROPY = (Population p) -> p.getEntropy() < TERMINAL_ENTROPY;
     private final static Terminator USE_FITNESS = (Population p) -> p.getFittest().getFitness() >= Fitness.getMaxFitness();
     private final static Terminator USE_LIKENESS =(Population p) -> p.getMaxLikenessRatio() >= 0.70;
     
+    // Actual convergence criteria
+    private final static Terminator TERMINAL = USE_LIKENESS;
+    
     public static void main(String[] args) {      
         // Set a candidate solution
-        Fitness.setSolution("1111000000000000000000000000000000000000000000000000000000001111");
+        String solution = "1111000000000000000000000000000000000000000000000000000000001111";
+        
+        Fitness.setSolution(solution);
 
         // Create an initial population
         Population population = new Population(50, true);
@@ -33,21 +38,23 @@ public class GA {
         int generationCount = 0;
         double entropy = 0;
 //        while (true) {
-        while(!isConverged(population,USE_LIKENESS)) {           
+        while(!isConverged(population,TERMINAL)) {           
             generationCount++;
             
             entropy = population.getEntropy();
             if(entropy < 2.0)
                 break;
             
-            System.out.printf("Generation: %2d fittest: %5.1f entrypy: %4.1f bits\n",generationCount,population.getFittest().getFitness(),entropy);
+            double mlr = population.getMaxLikenessRatio();
+            
+            System.out.printf("Generation: %2d fittest: %5.1f entrypy: %3.1f bits  mlr: %3.2f\n",generationCount,population.getFittest().getFitness(),entropy,mlr);
 //            System.out.println("Generation: " + generationCount + " Fittest: " + population.getFittest().getFitness()+" Entropy: "+entropy);
             population = Algorithm.evolvePopulation(population);
         }
         System.out.println("Converged!");
         System.out.println("Generations: " + generationCount);
         System.out.printf("Entropy: %4.1f\n",entropy);
-        System.out.printf("Max likeness: %5.2f\n",population.getMaxLikenessRatio());
+        System.out.printf("MLR: %5.2f\n",population.getMaxLikenessRatio());
         System.out.println("Genes:");
         System.out.println(population.getFittest());
     }
