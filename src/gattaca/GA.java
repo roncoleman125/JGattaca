@@ -36,14 +36,12 @@ public class GA {
         
         // Evolve our population until we reach an optimum solution
         int generationCount = 0;
-        double entropy = 0;
+
 //        while (true) {
         while(!isConverged(population,TERMINAL)) {           
             generationCount++;
             
-            entropy = population.getEntropy();
-            if(entropy < 2.0)
-                break;
+            double entropy = population.getEntropy();
             
             double mlr = population.getMaxLikenessRatio();
             
@@ -51,10 +49,14 @@ public class GA {
 //            System.out.println("Generation: " + generationCount + " Fittest: " + population.getFittest().getFitness()+" Entropy: "+entropy);
             population = Algorithm.evolvePopulation(population);
         }
+        
+        double entropy = population.getEntropy();
+        double mlr = population.getMaxLikenessRatio(); 
+        
         System.out.println("Converged!");
         System.out.println("Generations: " + generationCount);
         System.out.printf("Entropy: %4.1f\n",entropy);
-        System.out.printf("MLR: %5.2f\n",population.getMaxLikenessRatio());
+        System.out.printf("MLR: %5.2f\n",mlr);
         
         Individual fittest = population.getFittest();
         System.out.println("Genes (len = "+fittest.getChromosome().length()+"):");
