@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gattaca.blackjack;
+package gattaca.blackjack.card;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,7 @@ public class Shoe {
     protected ArrayList<Card> cards = new ArrayList<>();
     
     protected int nextIndex = 0;
+    protected int burnIndex = 0;
     
     protected Random ran = new Random(0);
     
@@ -24,21 +25,17 @@ public class Shoe {
         for(int n=0; n < decks; n++) {
             for(int suit=0; suit <= 4; suit++) {
                 for(int rank=2; rank <= 13; rank++) {
-                    Card card = new Card(lookupRank(rank),lookupSuit(suit));
+                    Card card = new Card(Card.lookupRank(rank),Card.lookupSuit(suit));
                     cards.add(card);
                 }
             }
         }
         
         Collections.shuffle(cards, ran);
-    }
-    
-    final public Card.Rank lookupRank(int rank) {
-        return Card.Rank.ACE;
-    }
-    
-    final public Card.Suit lookupSuit(int suit) {
-        return Card.Suit.CLUBS;
+        
+        int depth = cards.size() / 4;
+        
+        burnIndex = cards.size() - ran.nextInt(depth);
     }
     
     public Card deal() {
@@ -47,9 +44,14 @@ public class Shoe {
         return card;
     }
     
-    public void reset() {
+    public Boolean reshuffle() {
+        if(nextIndex < burnIndex)
+            return false;
+        
         nextIndex = 0;
         
         Collections.shuffle(cards);
+        
+        return true;
     }
 }

@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gattaca.blackjack;
+package gattaca.blackjack.player;
 
+import gattaca.blackjack.card.Card;
+import gattaca.blackjack.util.Command;
 import java.util.ArrayList;
 
 /**
@@ -12,13 +14,15 @@ import java.util.ArrayList;
  * @author Ron.Coleman
  */
 abstract public class AbstractPlayer {
-    protected ArrayList<Card> hand = new ArrayList<>();
-    protected Card upCard;
-    private double bankroll;
-    
     abstract public Command getCommand();
     
-    int aces = 0;
+    protected ArrayList<Card> hand = new ArrayList<>();
+    
+    protected Card upCard;
+    
+    private double bankroll = 0.0;
+    
+    protected int aces = 0;
     
     public void up(Card card) {
         this.upCard = card;
@@ -52,6 +56,15 @@ abstract public class AbstractPlayer {
         return sum;
     }
     
+    public Boolean hasBlackjack() {
+        if(hand.size() != 2 || value() != 21)
+            return false;
+        
+        Boolean bj = hand.get(0).isAce() || hand.get(1).isAce();
+        
+        return bj;
+    }
+    
     public Boolean isSoft() {
         return aces != 0;
     }
@@ -60,12 +73,20 @@ abstract public class AbstractPlayer {
         hand.clear();
     }
     
-    public void lose(int amt) {
+    public void loses(double amt) {
         bankroll -= amt;
     }
     
-    public void win(int amt) {
+    public void wins(double amt) {
         bankroll += amt;
+    }
+    
+    public void pushes() {
+        
+    }
+    
+    public void reshuffling(Boolean yes) {
+        
     }
     
     public double getBankroll() {

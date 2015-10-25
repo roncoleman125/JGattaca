@@ -1,0 +1,9 @@
+{
+    "numDecks": 6,
+    "numGames": 20,
+    "debug": true,
+    "players": [
+        { "player": "gattaca.blackjack.player.ThreeRuleBot"},
+        { "player": "gattaca.blackjack.player.Human"}
+    ]
+}

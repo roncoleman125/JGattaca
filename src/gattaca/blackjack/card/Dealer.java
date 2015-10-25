@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gattaca.blackjack;
+package gattaca.blackjack.card;
 
+import gattaca.blackjack.util.Command;
+import gattaca.blackjack.player.AbstractPlayer;
+import gattaca.blackjack.util.Config;
 import java.util.ArrayList;
 
 /**
@@ -12,32 +15,38 @@ import java.util.ArrayList;
  * @author Ron.Coleman
  */
 public class Dealer extends AbstractPlayer {
-    protected ArrayList<AbstractPlayer> players = new ArrayList<>(); 
-    protected Shoe shoe = new Shoe(6);
+    protected ArrayList<AbstractPlayer> players; 
+    protected Shoe shoe;
+    protected AbstractPlayer dealer;
     
     public Dealer() {
+        Config config = Config.getInstance("gattaca.json");
         
+        this.players = config.getPlayers(); 
+        
+        int numDecks = config.getNumDecks();
+        
+        this.shoe = new Shoe(numDecks);
     }
     
-    public void add(AbstractPlayer player) {
-        players.add(player);
-    }
-    
-    public void go() {
-        openGame();
+    public void go() {  
+        // Add dealer as last player to go
+        players.add(dealer = this);
         
-        dealInitial();
+        int numGames = Config.getInstance().getNumGames();
         
-        play();
+        for(int i=0; i < numGames; i++)
+            play();
     }
     
     protected void play() {
         openGame();
         
-        // Get number of players not including dealer
-        int numPlayers = players.size() - 1;
+        // Get number of players
+        int numPlayers = players.size();
         
         for(AbstractPlayer player: players) {
+            // Play up to the dealer in which we'll don something different
             if(player instanceof Dealer)
                 break;
             
@@ -54,13 +63,15 @@ public class Dealer extends AbstractPlayer {
                     
             } while(cmd == Command.HIT && player.value() <= 21);
             
+            // If player broke, take them out of game
             if(player.value() > 21) {
-                player.lose(1);
+                player.loses(1);
                 
                 numPlayers--;
             }
             
-            if(numPlayers == 0)
+            // If only
+            if(numPlayers == 1)
                 break;
         }
         
@@ -68,42 +79,64 @@ public class Dealer extends AbstractPlayer {
     }
     
     protected void closeGame(int numPlayers) {
+        // If dealer only one left, then done.
         if(numPlayers == 1)
             return;
         
-        // Reveal the hole card
-        distribute(this, hand.get(1), true);
+        // Reveal dealer hole card
+        distribute(dealer, hand.get(1), true);
 
         // Dealer must hit until 17 or greater
-        while (this.value() < 16) {
+        while (dealer.value() < 16) {
             Card card = shoe.deal();
 
             hit(card);
 
-            distribute(this, card, true);
+            distribute(dealer, card, true);
         }
 
-        // Close out the bets on the table
-        int dealerValue = value();
-
+        // If dealer broke, pay remaining players
+        int dealerValue = dealer.value();
+        
+        if(dealerValue > 21) {
+            for(AbstractPlayer player: players)
+                if(!(player instanceof Dealer) && player.value() <= 21)
+                    player.wins(1);
+            
+            return;
+        }
+            
+        // Else dealer did not break, so find who won, who lost
         for (AbstractPlayer player : players) {
             int playerValue = player.value();
+            
+            // Skip players already broke
+            if(playerValue > 21)
+                continue;
 
-            // Player wins
-            if (playerValue <= 21 && playerValue > dealerValue) {
-                player.win(1);
-            } // Player loses
+            // Player wins with Blackjack which pays 2:1
+            if(player.hasBlackjack())
+                player.wins(1.5);
+            
+            // Test player against dealer
             else if (playerValue <= 21) {
-                player.lose(1);
-            } // Push
-            else if (playerValue == dealerValue)
-                    ;
+                // Player loses if value is less than dealer or dealer has blackjack
+                if(playerValue < dealerValue || dealer.hasBlackjack())
+                    player.loses(1);
+                
+                else if(playerValue > dealerValue)
+                    player.wins(1);
+
+                else // Push
+                    player.pushes();
+            }
+
+            // Player if hand over 21
+            else
+                player.loses(1);
         }
     }
-    protected void dealInitial() {
-        // Dealer last to go
-        add(this);
-        
+    protected void dealInitial() {        
         // First round
         for(AbstractPlayer player: players) {
             Card card = shoe.deal();
@@ -132,6 +165,8 @@ public class Dealer extends AbstractPlayer {
     }
 
     public void openGame() {
+        dealInitial();
+        
         for(AbstractPlayer player: players) {
             player.reset();
         }
@@ -139,7 +174,11 @@ public class Dealer extends AbstractPlayer {
     
     @Override
     public void reset() {
-        shoe.reset();
+        Boolean yes = shoe.reshuffle();
+        
+        for(AbstractPlayer player: players)
+            player.reshuffling(yes);
+        
         hand.clear();
     }
     
