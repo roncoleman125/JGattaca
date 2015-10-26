@@ -11,20 +11,20 @@ package gattaca.blackjack.card;
  */
 public class Card {
     public enum Rank {
-        TWO(2),
-        THREE(3),
-        FOUR(4),
-        FIVE(5),
-        SIX(6),
-        SEVEN(7),
-        EIGHT(8),
-        NINE(9),
-        TEN(10),
-        JACK(10),
-        QUEEN(10),
-        KING(10),
-        ACE(1),
-        DONT_KNOW(-1);
+        Two(2),
+        Three(3),
+        Four(4),
+        Five(5),
+        Six(6),
+        Seven(7),
+        Eight(8),
+        Nine(9),
+        Ten(10),
+        Jack(10),
+        Queen(10),
+        King(10),
+        Ace(1),
+        None(-1);
         
         public int value;
         Rank(int value) {
@@ -33,16 +33,16 @@ public class Card {
     }
     
     public enum Suit {
-        CLUBS,
-        DIAMONDS,
-        HEARTS,
-        SPADES,
-        DONT_KNOW
+        Clubs,
+        Diamonds,
+        Hearts,
+        Spades,
+        None
     }
     
     public Rank rank;
     protected Suit suit;
-    public int value;
+    protected int value;
     
     public Card(Rank rank, Suit suit) {
         this.rank = rank;
@@ -50,8 +50,15 @@ public class Card {
         this.value = rank.value;
     }
     
+    public int value() {
+        if(isAce())
+            return value + 10;
+        
+        return value;
+    }
+    
     public Boolean isAce() {
-        return rank == Rank.ACE;
+        return rank == Rank.Ace;
     }
     
     public Rank getRank() {
@@ -67,49 +74,49 @@ public class Card {
         
         switch(rank) {
             case 2:
-                return Card.Rank.TWO; 
+                return Card.Rank.Two; 
             case 3:
-                return Card.Rank.THREE; 
+                return Card.Rank.Three; 
             case 4:
-                return Card.Rank.FOUR;
+                return Card.Rank.Four;
             case 5:
-                return Card.Rank.FIVE;
+                return Card.Rank.Five;
             case 6:
-                return Card.Rank.SIX;
+                return Card.Rank.Six;
             case 7:
-                return Card.Rank.SEVEN;
+                return Card.Rank.Seven;
             case 8:
-                return Card.Rank.EIGHT;
+                return Card.Rank.Eight;
             case 9:
-                return Card.Rank.NINE;
+                return Card.Rank.Nine;
             case 10:
-                return Card.Rank.TEN;
+                return Card.Rank.Ten;
             case 11:
-                return Card.Rank.JACK;
+                return Card.Rank.Jack;
             case 12:
-                return Card.Rank.QUEEN;
+                return Card.Rank.Queen;
             case 13:
-                return Card.Rank.KING;
+                return Card.Rank.King;
             case 14:
-                return Card.Rank.ACE;
+                return Card.Rank.Ace;
         }
         
-        return Card.Rank.DONT_KNOW;
+        return Card.Rank.None;
     }
     
     final static public Card.Suit lookupSuit(int suit) {
         assert(suit >= 0 && suit <= 3);
         switch(suit) {
             case 0:
-                return Card.Suit.CLUBS;
+                return Card.Suit.Clubs;
             case 1:
-                return Card.Suit.DIAMONDS;
+                return Card.Suit.Diamonds;
             case 2:
-                return Card.Suit.HEARTS;
+                return Card.Suit.Hearts;
             case 3:
-                return Card.Suit.SPADES;
+                return Card.Suit.Spades;
         }
-        return Card.Suit.DONT_KNOW;
+        return Card.Suit.None;
     }
     
     @Override

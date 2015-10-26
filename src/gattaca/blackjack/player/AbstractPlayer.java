@@ -24,22 +24,26 @@ abstract public class AbstractPlayer {
     
     protected int aces = 0;
     
-    public void up(Card card) {
-        this.upCard = card;
-    }
+    public int handValue = 0;
+//    
+//    public void up(Card card) {
+//        this.upCard = card;
+//    }
     
     public void hit(Card card) {
         hand.add(card);
         
         if(card.isAce())
             aces++;
+        
+        handValue = value();
     }
     
     public void dealt(AbstractPlayer player, Card card) {
         
     }
     
-    public int value() {
+    protected int value() {
         int sum = 0;
        
         for(Card card: hand) {
@@ -71,6 +75,7 @@ abstract public class AbstractPlayer {
     
     public void reset() {
         hand.clear();
+        upCard = null;
     }
     
     public void loses(double amt) {

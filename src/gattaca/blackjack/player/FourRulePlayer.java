@@ -5,24 +5,32 @@
  */
 package gattaca.blackjack.player;
 
+import gattaca.blackjack.card.Card;
+import gattaca.blackjack.game.Dealer;
 import gattaca.blackjack.util.Command;
 
 /**
  *
  * @author Ron.Coleman
  */
-public class FourRuleBot extends AbstractPlayer {   
+public class FourRulePlayer extends AbstractPlayer {     
     @Override
     public Command getCommand() {
-        if(value() >= 17)
+        if(this.handValue >= 17)
             return Command.STAY;
         
-        else if(value() <= 10)
+        else if(this.handValue <= 10)
             return Command.HIT;
         
-        else if(this.upCard.value >= 17)
+        else if(this.upCard.value() >= 10)
             return Command.HIT;
                     
         return Command.STAY;
+    }
+    
+    @Override
+    public void dealt(AbstractPlayer player, Card card) {
+        if(player instanceof Dealer)
+            this.upCard = card;
     }
 }

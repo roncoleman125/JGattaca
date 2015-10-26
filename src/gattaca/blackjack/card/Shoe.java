@@ -23,7 +23,7 @@ public class Shoe {
     
     public Shoe(int decks) {
         for(int n=0; n < decks; n++) {
-            for(int suit=0; suit <= 4; suit++) {
+            for(int suit=0; suit < 4; suit++) {
                 for(int rank=2; rank <= 13; rank++) {
                     Card card = new Card(Card.lookupRank(rank),Card.lookupSuit(suit));
                     cards.add(card);
@@ -33,6 +33,8 @@ public class Shoe {
         
         Collections.shuffle(cards, ran);
         
+        // Should really be based on the number of players? At some casinos
+        // the player places the burn card. 
         int depth = cards.size() / 4;
         
         burnIndex = cards.size() - ran.nextInt(depth);
