@@ -1,6 +1,5 @@
 package gattaca;
 
-import gattaca.convergence.Terminator;
 import gattaca.util.Config;
 
 /**
@@ -10,7 +9,9 @@ import gattaca.util.Config;
 public class GA {       
     public static void main(String[] args) {      
         // Create an initial population
-        Population population = new Population(50, true);
+        int popSize = Config.getInstance().popSize;
+        
+        Population population = new Population(popSize, true);
         
         // Evolve our population until we reach an optimum solution
         int generationCount = 0;

@@ -6,8 +6,7 @@
 package gattaca.blackjack.player;
 
 import gattaca.blackjack.card.Card;
-import gattaca.blackjack.game.Dealer;
-import gattaca.blackjack.util.Command;
+import gattaca.blackjack.util.Action;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +14,7 @@ import java.util.ArrayList;
  * @author Ron.Coleman
  */
 abstract public class Player {
-    abstract public Command getCommand();
+    abstract public Action getAction();
     
     protected ArrayList<Card> hand = new ArrayList<>();
     
@@ -43,9 +42,10 @@ abstract public class Player {
     public int handSize() {
         return hand.size();
     }
-    
+
     public void dealt(Player player, Card card) {
-        
+        if(player instanceof Dealer)
+            this.upCard = card;
     }
     
     public void makeDealer(Dealer dealer) {
@@ -145,6 +145,5 @@ abstract public class Player {
         
        return name + " (" + bankroll + "): " + cards + " = " + handValue;
 
-    }
-    
+    }  
 }

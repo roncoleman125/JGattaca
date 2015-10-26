@@ -9,14 +9,14 @@ package gattaca.blackjack.util;
  *
  * @author Ron.Coleman
  */
-public enum Command {
+public enum Action {
     NONE(-1),
     STAY (0),
     HIT (1),
     DOUBLE_DOWN (2);
     
     public int value;
-    Command(int value) {
+    Action(int value) {
         this.value = value;
     } 
 }

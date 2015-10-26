@@ -5,14 +5,32 @@
  */
 package gattaca.blackjack.game;
 
+import gattaca.blackjack.player.Dealer;
+
 /**
  *
  * @author Ron.Coleman
  */
 public class Game {
+    Dealer dealer = new Dealer();
+
+    public Game() {
+        this.dealer = new Dealer();
+    }
+    
+    public void start() {       
+        dealer.go();
+    }
+    
+    public double getEarnings() {
+        int playerNum = 0;
+        
+        return dealer.getBankroll(playerNum);
+    }
+    
     public static void main(String args[]) {
         Dealer dealer = new Dealer();
         
         dealer.go();
-    }
+    }   
 }

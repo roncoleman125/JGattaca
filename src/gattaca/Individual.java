@@ -1,21 +1,18 @@
 package gattaca;
 
+import gattaca.util.Config;
 import java.util.Random;
 
 /**
  * This class implements an individual.
  * @author Ron.Coleman
  */
-public class Individual {
-    final static String ALLELES = "01";
-    
-//    final static int CHROMOSOME_LENGTH = 64;
-    
+public class Individual {   
     static Random ran = new Random(0);
     
     protected final StringBuffer chromosome = new StringBuffer();
 
-    protected double fitness = 0;
+    protected double fitness = Double.NEGATIVE_INFINITY;
     
     protected final int chromosomeLength;
 
@@ -82,14 +79,16 @@ public class Individual {
      * @return Double
      */
     public double getFitness() {
-        if (fitness == 0) {
+        if (fitness == Double.NEGATIVE_INFINITY) {
             fitness = Fitness.calculate(this);
         }
         return fitness;
     }
     
     public static char getRandomAllele() {
-        char gene = ALLELES.charAt(ran.nextInt(ALLELES.length()));
+        String alleles = Config.getInstance().alleles;
+        
+        char gene = alleles.charAt(ran.nextInt(alleles.length()));
         
         return gene;
     }

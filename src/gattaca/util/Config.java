@@ -53,6 +53,8 @@ public class Config {
     /** Number of decks */
     public int numDecks;
     
+    public int popSize;
+    
     public String alleles = null;
     
     /** Debugging state in the config file */
@@ -99,10 +101,12 @@ public class Config {
             
             config.numDecks = ((Long) json.get("numDecks")).intValue();
             
-            config.isDebugging = (Boolean) json.get("debug");
-                        
-            JSONArray playersArray = (JSONArray)json.get("players");
+            config.popSize = ((Long) json.get("popSize")).intValue();
             
+            config.alleles = (String) json.get("alleles");
+            
+            config.isDebugging = (Boolean) json.get("debug");
+
             String className = (String) json.get("objective");
             config.objective = (IObjective) Class.forName(className).newInstance();
             
@@ -110,6 +114,8 @@ public class Config {
             config.terminator = (Terminator) Class.forName(className).newInstance();
             
             // Get the players
+            JSONArray playersArray = (JSONArray)json.get("players");
+            
             Iterator<JSONObject> iter = playersArray.iterator();
             
             while(iter.hasNext()) {

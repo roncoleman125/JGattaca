@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gattaca.blackjack.game;
+package gattaca.blackjack.player;
 
 import gattaca.blackjack.card.Card;
 import gattaca.blackjack.card.Shoe;
-import gattaca.blackjack.util.Command;
-import gattaca.blackjack.player.Player;
+import gattaca.blackjack.util.Action;
 import gattaca.util.Config;
 import java.util.ArrayList;
 
@@ -17,7 +16,7 @@ import java.util.ArrayList;
  * @author Ron.Coleman
  */
 public class Dealer extends Player {
-    protected ArrayList<Player> players; 
+    protected ArrayList<Player> players = Config.getInstance().players; 
     protected Shoe shoe;
     protected Boolean interactive = true;
     
@@ -30,6 +29,12 @@ public class Dealer extends Player {
         
         if(config.numGames >= 1000)
             interactive = false;
+    }
+    
+    public double getBankroll(int k) {
+        assert(k >= 0 && k < players.size());
+        
+        return players.get(k).getBankroll();
     }
     
     public void go() {  
@@ -63,17 +68,17 @@ public class Dealer extends Player {
         for(int k=0; k < players.size()-1; k++) {
             Player player = players.get(k);
             
-            Command cmd;
+            Action action;
             
             do {
-                cmd = player.getCommand();
+                action = player.getAction();
                 
-                if(cmd == Command.HIT) {
+                if(action == Action.HIT) {
                     Card card = shoe.deal();
                     
                     player.hit(card);
                 }
-                else if(cmd == Command.DOUBLE_DOWN && player.handSize() == 2) {
+                else if(action == Action.DOUBLE_DOWN && player.handSize() == 2) {
                     Card card = shoe.deal();
                     
                     player.hit(card);
@@ -81,7 +86,7 @@ public class Dealer extends Player {
                     player.doubleDown();
                 }
                     
-            } while(cmd == Command.HIT && player.handValue <= 21);
+            } while(action == Action.HIT && player.handValue <= 21);
             
             // If player broke, take them out of game
             if(player.handValue > 21) {
@@ -225,7 +230,7 @@ public class Dealer extends Player {
     }
     
     @Override
-    public Command getCommand() {
+    public Action getAction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
