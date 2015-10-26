@@ -29,7 +29,7 @@ public class Population {
         if (initialize) {
             // Loop and create individuals
             for (int i = 0; i < genePool.length; i++) {
-                Individual newIndividual = new Individual();
+                Individual newIndividual = new Individual(Fitness.getChromosomeLength());
                 newIndividual.generateIndividual();
                 genePool[i] = newIndividual;
             }

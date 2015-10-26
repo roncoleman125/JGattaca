@@ -6,6 +6,7 @@
 package gattaca.blackjack.player;
 
 import gattaca.blackjack.card.Card;
+import gattaca.blackjack.game.Dealer;
 import gattaca.blackjack.util.Command;
 import java.util.ArrayList;
 
@@ -22,13 +23,13 @@ abstract public class Player {
     
     protected double bankroll = 0.0;
     
+    protected Dealer dealer;
+    
     protected int aces = 0;
     
     public int handValue = 0;
-//    
-//    public void up(Card card) {
-//        this.upCard = card;
-//    }
+    
+    protected int betAmt = 1;
     
     public void hit(Card card) {
         hand.add(card);
@@ -39,8 +40,24 @@ abstract public class Player {
         handValue = value();
     }
     
+    public int handSize() {
+        return hand.size();
+    }
+    
     public void dealt(Player player, Card card) {
         
+    }
+    
+    public void makeDealer(Dealer dealer) {
+        this.dealer = dealer;
+    }
+    
+    public void doubleDown() {
+        betAmt = 2;
+    }
+    
+    public int getBet() {
+        return betAmt;
     }
     
     protected int value() {
@@ -75,15 +92,30 @@ abstract public class Player {
     
     public void reset() {
         hand.clear();
+        
+        betAmt = 1;
+        
         upCard = null;
     }
     
-    public void loses(double amt) {
-        bankroll -= amt;
+    public void loses() {
+        bankroll -= betAmt;
+        
+        dealer.wins(betAmt);
     }
     
-    public void wins(double amt) {
-        bankroll += amt;
+    public void wins() {
+        bankroll += betAmt;
+        
+        dealer.loses(betAmt);
+    }
+    
+    public void winsBlackjack() {
+        double earnings = 1.5 * betAmt;
+        
+        bankroll += earnings;
+        
+        dealer.loses(earnings);
     }
     
     public void pushes() {
@@ -106,7 +138,7 @@ abstract public class Player {
             cards += hand.get(k).toString();
             
             if(k != sz-1)
-                cards += "+";
+                cards += " + ";
         }
                 
         String name = this.getClass().getSimpleName();

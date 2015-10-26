@@ -9,19 +9,24 @@ import java.util.Random;
 public class Individual {
     final static String ALLELES = "01";
     
-    final static int CHROMOSOME_LENGTH = 64;
+//    final static int CHROMOSOME_LENGTH = 64;
     
     static Random ran = new Random(0);
     
-    private final StringBuffer chromosome = new StringBuffer();
+    protected final StringBuffer chromosome = new StringBuffer();
 
-    private double fitness = 0;
+    protected double fitness = 0;
+    
+    protected final int chromosomeLength;
 
     /**
      * Constructor
+     * @param chromosomeLength Chromosome length
      */
-    public Individual() {
-        for(int i=0; i < CHROMOSOME_LENGTH; i++)
+    public Individual(int chromosomeLength) {
+        this.chromosomeLength = chromosomeLength;
+        
+        for(int i=0; i < chromosomeLength; i++)
             chromosome.append("G");
     }
     
@@ -42,7 +47,7 @@ public class Individual {
      * @return char representing the gene
      */
     public char getGene(int index) {
-        assert(index >= 0 && index < CHROMOSOME_LENGTH);
+        assert(index >= 0 && index < chromosomeLength);
         
         return chromosome.charAt(index);
     }
@@ -53,7 +58,7 @@ public class Individual {
      * @param gene 
      */
     public void setGene(int index, char gene) {
-        assert(index >= 0 && index < CHROMOSOME_LENGTH);
+        assert(index >= 0 && index < chromosomeLength);
         
         chromosome.setCharAt(index, gene);
         fitness = 0;
@@ -61,7 +66,7 @@ public class Individual {
 
     /* Public methods */
     public int size() {
-        return CHROMOSOME_LENGTH;
+        return chromosomeLength;
     }
     
     /**

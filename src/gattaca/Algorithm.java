@@ -57,7 +57,7 @@ public class Algorithm {
 
     // Crossover individuals
     private static Individual crossover(Individual indiv1, Individual indiv2) {
-        Individual newSol = new Individual();
+        Individual newSol = new Individual(Fitness.getChromosomeLength());
         // Loop through genes
         for (int i = 0; i < indiv1.size(); i++) {
             // Crossover

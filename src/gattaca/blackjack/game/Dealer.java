@@ -9,7 +9,7 @@ import gattaca.blackjack.card.Card;
 import gattaca.blackjack.card.Shoe;
 import gattaca.blackjack.util.Command;
 import gattaca.blackjack.player.Player;
-import gattaca.blackjack.util.Config;
+import gattaca.util.Config;
 import java.util.ArrayList;
 
 /**
@@ -19,34 +19,37 @@ import java.util.ArrayList;
 public class Dealer extends Player {
     protected ArrayList<Player> players; 
     protected Shoe shoe;
-    protected Player dealer;
+    protected Boolean interactive = true;
     
     public Dealer() {
         Config config = Config.getInstance("gattaca.json");
         
-        this.players = config.getPlayers(); 
+        this.shoe = new Shoe(config.numDecks);
         
-        int numDecks = config.getNumDecks();
-        
-        this.shoe = new Shoe(numDecks);
         this.bankroll = 10000;
+        
+        if(config.numGames >= 1000)
+            interactive = false;
     }
     
     public void go() {  
-        // Add dealer as last player to go
+        // Let players know who dealer is to report earnings & loses
+        players.stream().forEach((player) -> {
+            player.makeDealer(this);
+        });
+
+        // Add dealer as last player's turn
         players.add(dealer = this);
         
-        int numGames = Config.getInstance().getNumGames();
+        int numGames = Config.getInstance().numGames;
         
-        for(int game=0; game < 2; game++) {
+        for(int game=0; numGames < 1000; game++) {
                                 
-            if (Config.getInstance().isDebugging())
-                System.out.println(">>>> GAME "+game+" STARTING");
+            log(">>>> GAME "+game+" STARTING");
 
             play();
             
-            if (Config.getInstance().isDebugging())
-                System.out.println(">>>> GAME "+game+" OVER");
+            log(">>>> GAME "+game+" OVER");
         }
     }
     
@@ -70,28 +73,34 @@ public class Dealer extends Player {
                     
                     player.hit(card);
                 }
+                else if(cmd == Command.DOUBLE_DOWN && player.handSize() == 2) {
+                    Card card = shoe.deal();
+                    
+                    player.hit(card);
+                    
+                    player.doubleDown();
+                }
                     
             } while(cmd == Command.HIT && player.handValue <= 21);
             
             // If player broke, take them out of game
             if(player.handValue > 21) {
-                player.loses(1);
+                player.loses();
                                     
-                if (Config.getInstance().isDebugging())
-                    System.out.println(player + " LOSES!");
+                log(player + " LOSES!");
                 
-                numPlayers--;
+                numPlayers++;
             }
             
-            // If only
+            // If only only one player left (the dealer!), close game
             if(numPlayers == 1)
                 break;
         }
         
         closeGame(numPlayers);
         
-        if (Config.getInstance().isDebugging())
-            System.out.println(dealer + "");
+        // Report dealer outcome
+        log(dealer + "");
     }
     
     protected void closeGame(int numPlayers) {
@@ -117,11 +126,8 @@ public class Dealer extends Player {
                 Player player = players.get(k);
                 
                 if(player.handValue <= 21) {
-                    player.wins(1);
-                    dealer.loses(1);
-                    
-                    if(Config.getInstance().isDebugging())
-                        System.out.println(player+" WINS!");
+                    player.wins();
+                    log(player + " WINS!");
                 }
             }
             
@@ -140,47 +146,33 @@ public class Dealer extends Player {
 
             // Player wins with Blackjack which pays 2:1
             if(player.hasBlackjack()) {
-                player.wins(1.5);
-                dealer.loses(1.5);
- 
-                if (Config.getInstance().isDebugging())
-                    System.out.println(player + " BLACKJACK WINS!");
+                player.winsBlackjack();
+                log(player + " BLACKJACK WINS!");
             }
             
             // Test player against dealer
             else if (playerValue <= 21) {
                 // Player loses if handValue is less than dealer or dealer has blackjack
                 if(playerValue < dealer.handValue || dealer.hasBlackjack()) {
-                    player.loses(1);
-                    dealer.wins(1);
-                                        
-                    if(Config.getInstance().isDebugging())
-                        System.out.println(player+" LOSES!");
+                    player.loses();
+                    log(player + " LOSES!");
                 }
                 
                 else if(playerValue > dealer.handValue) {
-                    player.wins(1);
-                    dealer.loses(1);
-                                        
-                    if(Config.getInstance().isDebugging())
-                        System.out.println(player+" WINS!");
+                    player.wins();
+                    log(player + " WINS!");
                 }
 
                 else {
                     player.pushes();
-                                        
-                    if(Config.getInstance().isDebugging())
-                        System.out.println(player+" PUSHES.");
+                    log(player + " PUSHES.") ;       
                 }
             }
 
             // Player if hand over 21
             else {
-                player.loses(1);
-
-                if (Config.getInstance().isDebugging()) {
-                    System.out.println(player + " WINS!");
-                }
+                player.loses();
+                log(player + " WINS!");
             }
         }
     }
@@ -237,4 +229,16 @@ public class Dealer extends Player {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void wins(double amt) {
+        bankroll += amt;
+    }
+    
+    public void loses(double amt) {
+        bankroll -= amt;
+    }
+    
+    public void log(String msg) {
+        if(interactive)
+            System.out.println(msg);
+    }
 }

@@ -17,9 +17,11 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package gattaca.blackjack.util;
+package gattaca.util;
 
+import gattaca.objective.IObjective;
 import gattaca.blackjack.player.Player;
+import gattaca.convergence.Terminator;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,22 +39,28 @@ import org.json.simple.parser.ParseException;
  */
 public class Config {
     /** Path of the config file */
-    public final static String CONFIG_PATH = "pokpoker.json";
+    public final static String CONFIG_PATH = "gattaca.json";
     
     /** JSON parser to read and process the config file */
     protected static JSONParser parser = new JSONParser();
     
     /** Number of players specified by the config file */
-    protected ArrayList<Player> players = new ArrayList<>();
+    public ArrayList<Player> players = new ArrayList<>();
     
     /** Number of games to play */
-    protected int numGames;
+    public int numGames;
     
     /** Number of decks */
-    protected int numDecks;
+    public int numDecks;
+    
+    public String alleles = null;
     
     /** Debugging state in the config file */
-    protected Boolean debug = false;
+    public Boolean isDebugging = false;
+    
+    public IObjective objective = null;
+    
+    public Terminator terminator = null;
     
     /** This one and only configuration */
     protected static Config config;
@@ -91,15 +99,21 @@ public class Config {
             
             config.numDecks = ((Long) json.get("numDecks")).intValue();
             
-            config.debug = (Boolean) json.get("debug");
+            config.isDebugging = (Boolean) json.get("debug");
                         
             JSONArray playersArray = (JSONArray)json.get("players");
+            
+            String className = (String) json.get("objective");
+            config.objective = (IObjective) Class.forName(className).newInstance();
+            
+            className = (String) json.get("terminator");
+            config.terminator = (Terminator) Class.forName(className).newInstance();
             
             // Get the players
             Iterator<JSONObject> iter = playersArray.iterator();
             
             while(iter.hasNext()) {
-                String className = (String) iter.next().get("player");
+                className = (String) iter.next().get("player");
                 
                 Player player = (Player) Class.forName(className).newInstance();
                 
@@ -113,45 +127,5 @@ public class Config {
         }
         
         return null;
-    }
-    
-    /**
-     * Gets players.
-     * @return List of players
-     */
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-    
-    /**
-     * Gets number of players.
-     * @return Integer
-     */
-    public int getNumPlayers() {
-        return players.size();
-    }
-    
-    /**
-     * Gets number of games.
-     * @return Integer
-     */
-    public int getNumGames() {
-        return numGames;
-    }
-    
-    /**
-     * Gets number of decks.
-     * @return Integer
-     */
-    public int getNumDecks() {
-        return numDecks;
-    }
-    
-    /**
-     * Answers whether game is in debug mode.
-     * @return Boolean
-     */
-    public Boolean isDebugging() {
-        return debug;
     }
 }

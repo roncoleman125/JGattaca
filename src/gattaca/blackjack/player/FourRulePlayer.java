@@ -16,15 +16,15 @@ import gattaca.blackjack.util.Command;
 public class FourRulePlayer extends Player {     
     @Override
     public Command getCommand() {
-        if(this.handValue >= 17)
+        if(handValue >= 17)
             return Command.STAY;
         
-        else if(this.handValue <= 10)
+        else if(handValue <= 10 || upCard.value() >= 7)
             return Command.HIT;
         
-        else if(this.upCard.value() >= 10)
-            return Command.HIT;
-                    
+        else if(handValue == 11 && hand.size() == 2)
+            return Command.DOUBLE_DOWN;
+        
         return Command.STAY;
     }
     

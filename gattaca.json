@@ -1,7 +1,10 @@
 {
     "numDecks": 6,
     "numGames": 20,
+    "alleles": "01",
     "debug": true,
+    "objective": "gattaca.objective.Simple",
+    "terminator": "gattaca.convergence.Likeness",
     "players": [
         { "player": "gattaca.blackjack.player.FourRulePlayer"}
     ]
