@@ -19,7 +19,7 @@
  */
 package gattaca.blackjack.util;
 
-import gattaca.blackjack.player.AbstractPlayer;
+import gattaca.blackjack.player.Player;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class Config {
     protected static JSONParser parser = new JSONParser();
     
     /** Number of players specified by the config file */
-    protected ArrayList<AbstractPlayer> players = new ArrayList<>();
+    protected ArrayList<Player> players = new ArrayList<>();
     
     /** Number of games to play */
     protected int numGames;
@@ -101,7 +101,7 @@ public class Config {
             while(iter.hasNext()) {
                 String className = (String) iter.next().get("player");
                 
-                AbstractPlayer player = (AbstractPlayer) Class.forName(className).newInstance();
+                Player player = (Player) Class.forName(className).newInstance();
                 
                 config.players.add(player);
             }
@@ -119,7 +119,7 @@ public class Config {
      * Gets players.
      * @return List of players
      */
-    public ArrayList<AbstractPlayer> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
     

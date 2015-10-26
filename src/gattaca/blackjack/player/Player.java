@@ -13,14 +13,14 @@ import java.util.ArrayList;
  *
  * @author Ron.Coleman
  */
-abstract public class AbstractPlayer {
+abstract public class Player {
     abstract public Command getCommand();
     
     protected ArrayList<Card> hand = new ArrayList<>();
     
     protected Card upCard;
     
-    private double bankroll = 0.0;
+    protected double bankroll = 0.0;
     
     protected int aces = 0;
     
@@ -39,7 +39,7 @@ abstract public class AbstractPlayer {
         handValue = value();
     }
     
-    public void dealt(AbstractPlayer player, Card card) {
+    public void dealt(Player player, Card card) {
         
     }
     
@@ -96,6 +96,23 @@ abstract public class AbstractPlayer {
     
     public double getBankroll() {
         return bankroll;
+    }
+    
+    public String toString() {
+        String cards = "";
+        
+        int sz = hand.size();
+        for(int k=0; k < sz; k++) {
+            cards += hand.get(k).toString();
+            
+            if(k != sz-1)
+                cards += "+";
+        }
+                
+        String name = this.getClass().getSimpleName();
+        
+       return name + " (" + bankroll + "): " + cards + " = " + handValue;
+
     }
     
 }

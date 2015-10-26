@@ -13,7 +13,7 @@ import gattaca.blackjack.util.Command;
  *
  * @author Ron.Coleman
  */
-public class FourRulePlayer extends AbstractPlayer {     
+public class FourRulePlayer extends Player {     
     @Override
     public Command getCommand() {
         if(this.handValue >= 17)
@@ -29,7 +29,7 @@ public class FourRulePlayer extends AbstractPlayer {
     }
     
     @Override
-    public void dealt(AbstractPlayer player, Card card) {
+    public void dealt(Player player, Card card) {
         if(player instanceof Dealer)
             this.upCard = card;
     }

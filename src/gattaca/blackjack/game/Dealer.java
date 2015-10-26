@@ -8,7 +8,7 @@ package gattaca.blackjack.game;
 import gattaca.blackjack.card.Card;
 import gattaca.blackjack.card.Shoe;
 import gattaca.blackjack.util.Command;
-import gattaca.blackjack.player.AbstractPlayer;
+import gattaca.blackjack.player.Player;
 import gattaca.blackjack.util.Config;
 import java.util.ArrayList;
 
@@ -16,10 +16,10 @@ import java.util.ArrayList;
  *
  * @author Ron.Coleman
  */
-public class Dealer extends AbstractPlayer {
-    protected ArrayList<AbstractPlayer> players; 
+public class Dealer extends Player {
+    protected ArrayList<Player> players; 
     protected Shoe shoe;
-    protected AbstractPlayer dealer;
+    protected Player dealer;
     
     public Dealer() {
         Config config = Config.getInstance("gattaca.json");
@@ -29,6 +29,7 @@ public class Dealer extends AbstractPlayer {
         int numDecks = config.getNumDecks();
         
         this.shoe = new Shoe(numDecks);
+        this.bankroll = 10000;
     }
     
     public void go() {  
@@ -37,8 +38,16 @@ public class Dealer extends AbstractPlayer {
         
         int numGames = Config.getInstance().getNumGames();
         
-        for(int i=0; i < numGames; i++)
+        for(int game=0; game < 2; game++) {
+                                
+            if (Config.getInstance().isDebugging())
+                System.out.println(">>>> GAME "+game+" STARTING");
+
             play();
+            
+            if (Config.getInstance().isDebugging())
+                System.out.println(">>>> GAME "+game+" OVER");
+        }
     }
     
     protected void play() {
@@ -47,10 +56,9 @@ public class Dealer extends AbstractPlayer {
         // Get number of players
         int numPlayers = players.size();
         
-        for(AbstractPlayer player: players) {
-            // Play up to the dealer in which we'll don something different
-            if(player instanceof Dealer)
-                break;
+        // Play up to the dealer in which we'll don something different
+        for(int k=0; k < players.size()-1; k++) {
+            Player player = players.get(k);
             
             Command cmd;
             
@@ -68,6 +76,9 @@ public class Dealer extends AbstractPlayer {
             // If player broke, take them out of game
             if(player.handValue > 21) {
                 player.loses(1);
+                                    
+                if (Config.getInstance().isDebugging())
+                    System.out.println(player + " LOSES!");
                 
                 numPlayers--;
             }
@@ -78,6 +89,9 @@ public class Dealer extends AbstractPlayer {
         }
         
         closeGame(numPlayers);
+        
+        if (Config.getInstance().isDebugging())
+            System.out.println(dealer + "");
     }
     
     protected void closeGame(int numPlayers) {
@@ -97,19 +111,27 @@ public class Dealer extends AbstractPlayer {
             distribute(dealer, card, true);
         }
 
-        // If dealer broke, pay remaining players
-        int dealerValue = dealer.handValue;
-        
-        if(dealerValue > 21) {
-            for(AbstractPlayer player: players)
-                if(!(player instanceof Dealer) && player.handValue <= 21)
+        // If dealer broke, pay remaining players        
+        if(dealer.handValue > 21) {
+            for(int k=0; k < players.size()-1; k++) {
+                Player player = players.get(k);
+                
+                if(player.handValue <= 21) {
                     player.wins(1);
+                    dealer.loses(1);
+                    
+                    if(Config.getInstance().isDebugging())
+                        System.out.println(player+" WINS!");
+                }
+            }
             
             return;
         }
             
         // Else dealer did not break, so find who won, who lost
-        for (AbstractPlayer player : players) {
+        for(int k=0; k < players.size()-1; k++) {
+            Player player = players.get(k);
+
             int playerValue = player.handValue;
             
             // Skip players already broke
@@ -117,30 +139,55 @@ public class Dealer extends AbstractPlayer {
                 continue;
 
             // Player wins with Blackjack which pays 2:1
-            if(player.hasBlackjack())
+            if(player.hasBlackjack()) {
                 player.wins(1.5);
+                dealer.loses(1.5);
+ 
+                if (Config.getInstance().isDebugging())
+                    System.out.println(player + " BLACKJACK WINS!");
+            }
             
             // Test player against dealer
             else if (playerValue <= 21) {
                 // Player loses if handValue is less than dealer or dealer has blackjack
-                if(playerValue < dealerValue || dealer.hasBlackjack())
+                if(playerValue < dealer.handValue || dealer.hasBlackjack()) {
                     player.loses(1);
+                    dealer.wins(1);
+                                        
+                    if(Config.getInstance().isDebugging())
+                        System.out.println(player+" LOSES!");
+                }
                 
-                else if(playerValue > dealerValue)
+                else if(playerValue > dealer.handValue) {
                     player.wins(1);
+                    dealer.loses(1);
+                                        
+                    if(Config.getInstance().isDebugging())
+                        System.out.println(player+" WINS!");
+                }
 
-                else // Push
+                else {
                     player.pushes();
+                                        
+                    if(Config.getInstance().isDebugging())
+                        System.out.println(player+" PUSHES.");
+                }
             }
 
             // Player if hand over 21
-            else
+            else {
                 player.loses(1);
+
+                if (Config.getInstance().isDebugging()) {
+                    System.out.println(player + " WINS!");
+                }
+            }
         }
     }
+    
     protected void dealInitial() {        
         // First round
-        for(AbstractPlayer player: players) {
+        for(Player player: players) {
             Card card = shoe.deal();
             
             player.hit(card);
@@ -149,7 +196,7 @@ public class Dealer extends AbstractPlayer {
         }
         
         // Second round
-        for (AbstractPlayer player : players) {
+        for (Player player : players) {
             Card card = shoe.deal();
             
             player.hit(card);
@@ -158,8 +205,8 @@ public class Dealer extends AbstractPlayer {
         }
     }
     
-    protected void distribute(AbstractPlayer player, Card card, Boolean mine) {
-        for(AbstractPlayer p: players) {
+    protected void distribute(Player player, Card card, Boolean mine) {
+        for(Player p: players) {
             if(!mine && player instanceof Dealer)
                 continue;
             
@@ -168,7 +215,7 @@ public class Dealer extends AbstractPlayer {
     }
 
     public void openGame() {
-        for(AbstractPlayer player: players) {
+        for(Player player: players) {
             player.reset();
         }
         
@@ -179,7 +226,7 @@ public class Dealer extends AbstractPlayer {
     public void reset() {
         Boolean yes = shoe.reshuffle();
         
-        for(AbstractPlayer player: players)
+        for(Player player: players)
             player.reshuffling(yes);
         
         hand.clear();
