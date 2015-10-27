@@ -20,29 +20,48 @@
 package gattaca.objective;
 
 import gattaca.Individual;
+import gattaca.blackjack.game.Blackjack;
+import gattaca.blackjack.player.Player;
+import gattaca.util.Config;
+import gattaca.blackjack.player.GACasualBasicStrategyPlayer;
 
 /**
- * GA objective function
+ *
  * @author Ron.Coleman
  */
-public interface IObjective {
+public class GACasualBasicStrategy implements IObjective {
+
+    @Override
+    public double fitness(Individual individual) {
+        Blackjack game = new Blackjack();
+        
+        for(Player player: Config.getInstance().players) {
+            if(player instanceof GACasualBasicStrategyPlayer) {
+                String chromosome = individual.getChromosome();
+                
+                ((GACasualBasicStrategyPlayer)player).setChromosome(chromosome);
+            }
+        }
+        
+        game.start();
+        
+        double earnings = game.getEarnings();
+        
+        return earnings;
+    }
+
     /**
-     * Gets the fitness of the individual.
-     * @param individual Individual
-     * @return Double
-     */
-    public double fitness(Individual individual);
-    
-    /**
-     * Gets the chromosome length.
+     * GA basic strategy player has five decisions to check driven by its chromosome.
      * @return Integer
      */
-    public int getChromosomeLength();
+    @Override
+    public int getChromosomeLength() {
+        return 5;
+    }
+
+    @Override
+    public double getMaxFitness() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
-    /**
-     * Gets the maximum knowable fitness which is possible only with
-     * supervised learning.
-     * @return Double
-     */
-    public double getMaxFitness();
 }

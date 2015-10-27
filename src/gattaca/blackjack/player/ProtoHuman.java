@@ -17,32 +17,43 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package gattaca.objective;
+package gattaca.blackjack.player;
 
-import gattaca.Individual;
+import gattaca.blackjack.game.Action;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
- * GA objective function
+ *
  * @author Ron.Coleman
  */
-public interface IObjective {
-    /**
-     * Gets the fitness of the individual.
-     * @param individual Individual
-     * @return Double
-     */
-    public double fitness(Individual individual);
-    
-    /**
-     * Gets the chromosome length.
-     * @return Integer
-     */
-    public int getChromosomeLength();
-    
-    /**
-     * Gets the maximum knowable fitness which is possible only with
-     * supervised learning.
-     * @return Double
-     */
-    public double getMaxFitness();
+public class ProtoHuman extends Player {
+
+    protected BufferedReader br;
+
+    public ProtoHuman() {
+        br = new BufferedReader(new InputStreamReader(System.in));
+    }
+
+    @Override
+    public Action getAction() {
+        while (true) {
+            try {
+                System.out.print("Hit, Stay, or Double-Down? ");
+
+                String input = br.readLine().trim().toLowerCase();
+                
+                if (input.length() == 0) {
+                    continue;
+                }
+
+                return Action.STAY;
+
+            } catch (IOException ex) {
+                return Action.NONE;
+            }
+        }
+    }
+
 }

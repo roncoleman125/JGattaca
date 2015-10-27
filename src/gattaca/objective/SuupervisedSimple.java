@@ -22,27 +22,46 @@ package gattaca.objective;
 import gattaca.Individual;
 
 /**
- * GA objective function
+ * This class is a simple demo of what the GA can do in a supervised manner.
  * @author Ron.Coleman
  */
-public interface IObjective {
+public class SuupervisedSimple implements IObjective {
+    protected String solution = "1111000000000000000000000000000000000000000000000000000000001111";
+    
     /**
      * Gets the fitness of the individual.
      * @param individual Individual
      * @return Double
      */
-    public double fitness(Individual individual);
-    
+    @Override
+    public double fitness(Individual individual) {
+        int count = 0;
+        
+        // Loop through our individuals genes and compare them to our cadidates
+        for (int i = 0; i < individual.size() && i < solution.length(); i++) {
+            if (individual.getGene(i) == solution.charAt(i)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     /**
      * Gets the chromosome length.
      * @return Integer
      */
-    public int getChromosomeLength();
-    
+    @Override
+    public int getChromosomeLength() {
+        return solution.length();
+    }
+
     /**
      * Gets the maximum knowable fitness which is possible only with
      * supervised learning.
      * @return Double
      */
-    public double getMaxFitness();
+    @Override
+    public double getMaxFitness() {
+        return solution.length();
+    }
 }

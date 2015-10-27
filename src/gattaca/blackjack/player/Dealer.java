@@ -1,14 +1,28 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ Copyright (c) 2015 Ron Coleman
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package gattaca.blackjack.player;
 
 import gattaca.blackjack.card.Card;
 import gattaca.blackjack.card.Shoe;
-import gattaca.blackjack.game.Game;
-import gattaca.blackjack.util.Action;
+import gattaca.blackjack.game.Blackjack;
+import gattaca.blackjack.game.Action;
 import gattaca.util.Config;
 import java.util.ArrayList;
 
@@ -22,6 +36,9 @@ public class Dealer extends Player {
     protected ArrayList<Player> players = Config.getInstance().players; 
     protected Shoe shoe;
     
+    /**
+     * Constructor
+     */
     public Dealer() {
         Config config = Config.getInstance("gattaca.json");
         
@@ -30,14 +47,22 @@ public class Dealer extends Player {
         this.bankroll = INTIAL_CREDIT;
     }
     
+    /**
+     * Gets player k bankroll
+     * @param k Player number
+     * @return Double
+     */
     public double getBankroll(int k) {
         assert(k >= 0 && k < players.size());
         
         return players.get(k).getBankroll();
     }
     
-    public void go() {  
-        Game.log("!!!!! ENTERING CASINO");
+    /**
+     * Starts the game.
+     */
+    public void start() {  
+        Blackjack.log("!!!!! ENTERING CASINO");
         
         // Let players know who dealer is to report earnings & loses
         players.stream().forEach((player) -> {
@@ -51,16 +76,19 @@ public class Dealer extends Player {
 
         for(int game=0; game < numGames; game++) {
                                 
-            Game.log(">>>> GAME "+game+" STARTING");
+            Blackjack.log(">>>> GAME "+game+" STARTING");
 
             play();
             
-            Game.log(">>>> GAME "+game+" OVER");
+            Blackjack.log(">>>> GAME "+game+" OVER");
         }
         
-        Game.log("!!!!! LEAVING CASINO");
+        Blackjack.log("!!!!! LEAVING CASINO");
     }
     
+    /**
+     * Plays one game.
+     */
     protected void play() {
         openGame();
         
@@ -95,7 +123,7 @@ public class Dealer extends Player {
             if(player.handValue > 21) {
                 player.loses();
                                     
-                Game.log(player + " LOSES!");
+                Blackjack.log(player + " LOSES!");
                 
                 numPlayers--;
             }
@@ -108,10 +136,13 @@ public class Dealer extends Player {
         closeGame(numPlayers);
         
         // Report dealer outcome
-        Game.log(dealer + "");
+        Blackjack.log(dealer + "");
     }
 
-    public void openGame() {
+    /**
+     * Opens a game, namely, initializes it.
+     */
+    protected void openGame() {
         for(Player player: players) {
             player.reset();            
         }
@@ -119,6 +150,10 @@ public class Dealer extends Player {
         dealInitial();
     }
     
+    /**
+     * Closes a game
+     * @param numPlayers Number of players in the game, not necessarily players.size().
+     */
     protected void closeGame(int numPlayers) {
         // If dealer only one left, then done.
         if(numPlayers == 1)
@@ -143,7 +178,7 @@ public class Dealer extends Player {
                 
                 if(player.handValue <= 21) {
                     player.wins();
-                    Game.log(player + " WINS!");
+                    Blackjack.log(player + " WINS!");
                 }
             }
             
@@ -163,7 +198,7 @@ public class Dealer extends Player {
             // Player wins with Blackjack which pays 2:1
             if(player.hasBlackjack()) {
                 player.winsBlackjack();
-                Game.log(player + " BLACKJACK WINS!");
+                Blackjack.log(player + " BLACKJACK WINS!");
             }
             
             // Test player against dealer
@@ -171,28 +206,31 @@ public class Dealer extends Player {
                 // Player loses if handValue is less than dealer or dealer has blackjack
                 if(playerValue < dealer.handValue || dealer.hasBlackjack()) {
                     player.loses();
-                    Game.log(player + " LOSES!");
+                    Blackjack.log(player + " LOSES!");
                 }
                 
                 else if(playerValue > dealer.handValue) {
                     player.wins();
-                    Game.log(player + " WINS!");
+                    Blackjack.log(player + " WINS!");
                 }
 
                 else {
                     player.pushes();
-                    Game.log(player + " PUSHES.") ;       
+                    Blackjack.log(player + " PUSHES.") ;       
                 }
             }
 
             // Player if hand over 21
             else {
                 player.loses();
-                Game.log(player + " WINS!");
+                Blackjack.log(player + " WINS!");
             }
         }
     }
     
+    /**
+     * Deals first second round of cards.
+     */
     protected void dealInitial() {        
         // First round
         for(Player player: players) {
@@ -213,6 +251,12 @@ public class Dealer extends Player {
         }
     }
     
+    /**
+     * Conditionally distribute dealt card to all players.
+     * @param player Player which received the card
+     * @param card Card
+     * @param mine If false don't distribute this dealer's card
+     */
     protected void distribute(Player player, Card card, Boolean mine) {
         for(Player p: players) {
             if(!mine && player instanceof Dealer)
@@ -222,6 +266,9 @@ public class Dealer extends Player {
         }
     }
     
+    /**
+     * Resets the dealer state.
+     */
     @Override
     public void reset() {
         Boolean yes = shoe.reshuffle();
@@ -236,21 +283,36 @@ public class Dealer extends Player {
         handValue = 0;
     }
     
+    /**
+     * Gets the dealer's action which, in this case, is not meaningful
+     * @return 
+     */
     @Override
     public Action getAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Action.NONE;
     }
     
+    /**
+     * Dealer won this amount
+     * @param amt Amount
+     */
     public void wins(double amt) {
         bankroll += amt;
     }
     
+    /**
+     * Dealer loses this amount.
+     * @param amt Amount
+     */
     public void loses(double amt) {
         bankroll -= amt;
         
         assert(bankroll > 0);
     }
     
+    /**
+     * Fund the dealer's account
+     */
     @Override
     public void fund() {
         bankroll = INTIAL_CREDIT;

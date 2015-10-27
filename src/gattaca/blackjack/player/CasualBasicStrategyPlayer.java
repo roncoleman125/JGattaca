@@ -17,32 +17,29 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package gattaca.objective;
+package gattaca.blackjack.player;
 
-import gattaca.Individual;
+import gattaca.blackjack.game.Action;
 
 /**
- * GA objective function
+ *
  * @author Ron.Coleman
  */
-public interface IObjective {
-    /**
-     * Gets the fitness of the individual.
-     * @param individual Individual
-     * @return Double
-     */
-    public double fitness(Individual individual);
-    
-    /**
-     * Gets the chromosome length.
-     * @return Integer
-     */
-    public int getChromosomeLength();
-    
-    /**
-     * Gets the maximum knowable fitness which is possible only with
-     * supervised learning.
-     * @return Double
-     */
-    public double getMaxFitness();
+public class CasualBasicStrategyPlayer extends Player {     
+    @Override
+    public Action getAction() {
+        if(handValue >= 17)
+            return Action.STAY;
+        
+        else if(upCard.value() >= 7)
+            return Action.HIT;
+        
+        else if(handValue <= 10)
+            return Action.HIT;
+
+        else if(handValue == 11 && hand.size() == 2)
+            return Action.DOUBLE_DOWN;
+        
+        return Action.STAY;
+    }
 }

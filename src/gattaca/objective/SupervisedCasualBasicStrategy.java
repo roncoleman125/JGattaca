@@ -22,27 +22,38 @@ package gattaca.objective;
 import gattaca.Individual;
 
 /**
- * GA objective function
+ * This class is used where we know the casual Blackjack basic strategy.
  * @author Ron.Coleman
  */
-public interface IObjective {
-    /**
-     * Gets the fitness of the individual.
-     * @param individual Individual
-     * @return Double
-     */
-    public double fitness(Individual individual);
+public class SupervisedCasualBasicStrategy implements IObjective {
+    // Indices in the solution have the following meaning:
+    // 0 - My hand >= 17
+    // 1 - Dealer up card >= 7
+    // 2 - My hand <= 10
+    // 3 - My hand == 11 with two cards
+    // 4 - STAY, if none of the above hold
+    protected String solution = "SHHDS";
     
-    /**
-     * Gets the chromosome length.
-     * @return Integer
-     */
-    public int getChromosomeLength();
-    
-    /**
-     * Gets the maximum knowable fitness which is possible only with
-     * supervised learning.
-     * @return Double
-     */
-    public double getMaxFitness();
+    @Override
+    public double fitness(Individual individual) {
+        int count = 0;
+        
+        // Loop through our individuals genes and compare them to our cadidates
+        for (int i = 0; i < individual.size() && i < solution.length(); i++) {
+            if (individual.getGene(i) == solution.charAt(i)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public int getChromosomeLength() {
+        return solution.length();
+    }
+
+    @Override
+    public double getMaxFitness() {
+        return solution.length();
+    }
 }

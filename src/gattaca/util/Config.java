@@ -45,7 +45,7 @@ public class Config {
     /** JSON parser to read and process the config file */
     protected static JSONParser parser = new JSONParser();
     
-    /** Number of players specified by the config file */
+    /** Blackjack players */
     public ArrayList<Player> players = new ArrayList<>();
     
     /** Number of games to play */
@@ -54,17 +54,22 @@ public class Config {
     /** Number of decks */
     public int numDecks;
     
+    /** GA population size */
     public int popSize;
     
+    /** Alleles for GA */
     public String alleles = null;
     
     /** Debugging state in the config file */
     public Boolean isDebugging = false;
     
+    /** GA objective function */
     public IObjective objective = null;
     
+    /** GA convergence method */
     public Terminator terminator = null;
     
+    /** Dealer for Blackjack */
     public Dealer dealer = null;
     
     /** This one and only configuration */
@@ -112,7 +117,7 @@ public class Config {
             className = (String) json.get("terminator");
             config.terminator = (Terminator) Class.forName(className).newInstance();
             
-            // Load optional Blackjack parameters
+            // Load optional Blackjack stuff
             Object obj = json.get("numGames");
             if(obj != null)
                 config.numGames = ((Long) obj).intValue();
