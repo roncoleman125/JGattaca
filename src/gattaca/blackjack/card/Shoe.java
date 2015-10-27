@@ -22,9 +22,15 @@ public class Shoe {
     protected Random ran = new Random(0);
     
     public Shoe(int decks) {
+        this(decks,System.currentTimeMillis());
+    }
+    
+    public Shoe(int decks, long seed) {
+        ran = new Random(seed);
+        
         for(int n=0; n < decks; n++) {
             for(int suit=0; suit < 4; suit++) {
-                for(int rank=2; rank <= 13; rank++) {
+                for(int rank=2; rank <= 14; rank++) {
                     Card card = new Card(Card.lookupRank(rank),Card.lookupSuit(suit));
                     cards.add(card);
                 }

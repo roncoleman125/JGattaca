@@ -7,6 +7,7 @@ package gattaca.blackjack.player;
 
 import gattaca.blackjack.card.Card;
 import gattaca.blackjack.card.Shoe;
+import gattaca.blackjack.game.Game;
 import gattaca.blackjack.util.Action;
 import gattaca.util.Config;
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ public class Dealer extends Player {
     
     protected ArrayList<Player> players = Config.getInstance().players; 
     protected Shoe shoe;
-    protected Boolean interactive = true;
     
     public Dealer() {
         Config config = Config.getInstance("gattaca.json");
@@ -28,9 +28,6 @@ public class Dealer extends Player {
         this.shoe = new Shoe(config.numDecks);
         
         this.bankroll = INTIAL_CREDIT;
-        
-        if(config.numGames >= 1000)
-            interactive = false;
     }
     
     public double getBankroll(int k) {
@@ -40,7 +37,7 @@ public class Dealer extends Player {
     }
     
     public void go() {  
-        log(">>>> ENTERING CASINO");
+        Game.log("!!!!! ENTERING CASINO");
         
         // Let players know who dealer is to report earnings & loses
         players.stream().forEach((player) -> {
@@ -54,14 +51,14 @@ public class Dealer extends Player {
 
         for(int game=0; game < numGames; game++) {
                                 
-            log(">>>> GAME "+game+" STARTING");
+            Game.log(">>>> GAME "+game+" STARTING");
 
             play();
             
-            log(">>>> GAME "+game+" OVER");
+            Game.log(">>>> GAME "+game+" OVER");
         }
         
-        log(">>>> LEAVING CASINO");
+        Game.log("!!!!! LEAVING CASINO");
     }
     
     protected void play() {
@@ -98,7 +95,7 @@ public class Dealer extends Player {
             if(player.handValue > 21) {
                 player.loses();
                                     
-                log(player + " LOSES!");
+                Game.log(player + " LOSES!");
                 
                 numPlayers--;
             }
@@ -111,7 +108,7 @@ public class Dealer extends Player {
         closeGame(numPlayers);
         
         // Report dealer outcome
-        log(dealer + "");
+        Game.log(dealer + "");
     }
 
     public void openGame() {
@@ -146,7 +143,7 @@ public class Dealer extends Player {
                 
                 if(player.handValue <= 21) {
                     player.wins();
-                    log(player + " WINS!");
+                    Game.log(player + " WINS!");
                 }
             }
             
@@ -166,7 +163,7 @@ public class Dealer extends Player {
             // Player wins with Blackjack which pays 2:1
             if(player.hasBlackjack()) {
                 player.winsBlackjack();
-                log(player + " BLACKJACK WINS!");
+                Game.log(player + " BLACKJACK WINS!");
             }
             
             // Test player against dealer
@@ -174,24 +171,24 @@ public class Dealer extends Player {
                 // Player loses if handValue is less than dealer or dealer has blackjack
                 if(playerValue < dealer.handValue || dealer.hasBlackjack()) {
                     player.loses();
-                    log(player + " LOSES!");
+                    Game.log(player + " LOSES!");
                 }
                 
                 else if(playerValue > dealer.handValue) {
                     player.wins();
-                    log(player + " WINS!");
+                    Game.log(player + " WINS!");
                 }
 
                 else {
                     player.pushes();
-                    log(player + " PUSHES.") ;       
+                    Game.log(player + " PUSHES.") ;       
                 }
             }
 
             // Player if hand over 21
             else {
                 player.loses();
-                log(player + " WINS!");
+                Game.log(player + " WINS!");
             }
         }
     }
@@ -257,10 +254,5 @@ public class Dealer extends Player {
     @Override
     public void fund() {
         bankroll = INTIAL_CREDIT;
-    }
-    
-    public void log(String msg) {
-        if(interactive)
-            System.out.println(msg);
     }
 }

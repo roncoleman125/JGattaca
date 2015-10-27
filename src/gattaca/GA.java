@@ -27,7 +27,7 @@ public class GA {
             
             double fitness = fittest.getFitness();
             
-            System.out.printf("Generation: %2d fittest: %5.1f entrypy: %3.1f bits  mlr: %3.2f\n",generationCount,fitness,entropy,mlr);
+            System.out.printf("Generation: %2d fittest: %5.1f entrypy: %3.1f bits  mlr: %3.2f %s\n",generationCount,fitness,entropy,mlr,fittest);
                         
             population = Algorithm.evolvePopulation(population);
         }
@@ -41,7 +41,7 @@ public class GA {
         System.out.printf("MLR: %5.2f\n",mlr);
         
         Individual fittest = population.getFittest();
-        System.out.println("Genes (len = "+fittest.getChromosome().length()+"):");
+        System.out.print("Genes (len = "+fittest.getChromosome().length()+"): ");
         System.out.println(fittest);
     }
     

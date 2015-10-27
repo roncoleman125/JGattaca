@@ -77,13 +77,8 @@ abstract public class Player {
         return sum;
     }
     
-    public Boolean hasBlackjack() {
-        if(hand.size() != 2 || value() != 21)
-            return false;
-        
-        Boolean bj = hand.get(0).isAce() || hand.get(1).isAce();
-        
-        return bj;
+    public Boolean hasBlackjack() {       
+        return value() == 21 && hand.size() == 2;
     }
     
     public Boolean isSoft() {

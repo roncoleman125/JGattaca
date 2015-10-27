@@ -11,7 +11,7 @@ import gattaca.blackjack.util.Action;
  *
  * @author Ron.Coleman
  */
-public class SimpleBasicStrategy extends Player {     
+public class SimpleBasicStrategyPlayer extends Player {     
     @Override
     public Action getAction() {
         if(handValue >= 17)

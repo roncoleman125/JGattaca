@@ -58,7 +58,7 @@ public class Individual {
         assert(index >= 0 && index < chromosomeLength);
         
         chromosome.setCharAt(index, gene);
-        fitness = 0;
+        fitness = Double.NEGATIVE_INFINITY;
     }
 
     /* Public methods */

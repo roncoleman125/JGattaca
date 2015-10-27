@@ -11,7 +11,7 @@ public class Algorithm {
     private static final double UNIFORM_RATE = 0.5;
     private static final double MUTATION_RATE = 0.015;
     private static final int TOURNAMENT_SIZE = 5;
-    private static final boolean ELITIST = false;
+    private static final boolean ELITIST = true;
 
     static final Random ran = new Random(0);
        
