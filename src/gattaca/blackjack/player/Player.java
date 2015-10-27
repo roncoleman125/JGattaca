@@ -96,6 +96,10 @@ abstract public class Player {
         betAmt = 1;
         
         upCard = null;
+        
+        aces = 0;
+        
+        handValue = 0;
     }
     
     public void loses() {
@@ -130,6 +134,11 @@ abstract public class Player {
         return bankroll;
     }
     
+    public void fund() {
+        bankroll = 0;
+    }
+    
+    @Override
     public String toString() {
         String cards = "";
         

@@ -33,7 +33,7 @@ public class GASimpleBasicStrategyPlayer extends Player {
             Action action = geneToAction.get(gene(0));
             return action;
         }
-        else if(handValue <= 10 || upCard.value() >= 7) {
+        else if(handValue <= 10) {
             Action action = geneToAction.get(gene(1));
             return action;
         }
@@ -55,6 +55,7 @@ public class GASimpleBasicStrategyPlayer extends Player {
     protected String gene(int n) {
         assert(n >= 0 && n < chromosome.length());
         
-        return chromosome.substring(n,n);
+        String g = chromosome.substring(n,n+1);
+        return g;
     }
 }

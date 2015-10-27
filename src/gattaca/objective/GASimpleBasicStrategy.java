@@ -15,7 +15,7 @@ import gattaca.blackjack.player.GASimpleBasicStrategyPlayer;
  *
  * @author Ron.Coleman
  */
-public class FourRule implements IObjective {
+public class GASimpleBasicStrategy implements IObjective {
 
     @Override
     public double fitness(Individual individual) {
@@ -31,12 +31,18 @@ public class FourRule implements IObjective {
         
         game.start();
         
-        return 0;
+        double earnings = game.getEarnings();
+        
+        return earnings;
     }
 
+    /**
+     * GA basic strategy player has five decisions to check driven by its chromosome.
+     * @return Integer
+     */
     @Override
     public int getChromosomeLength() {
-        return 4;
+        return 5;
     }
 
     @Override

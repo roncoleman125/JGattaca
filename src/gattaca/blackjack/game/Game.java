@@ -6,16 +6,17 @@
 package gattaca.blackjack.game;
 
 import gattaca.blackjack.player.Dealer;
+import gattaca.util.Config;
 
 /**
  *
  * @author Ron.Coleman
  */
 public class Game {
-    Dealer dealer = new Dealer();
+    protected Dealer dealer;
 
     public Game() {
-        this.dealer = new Dealer();
+        this.dealer = Config.getInstance("gattaca.json").dealer;
     }
     
     public void start() {       

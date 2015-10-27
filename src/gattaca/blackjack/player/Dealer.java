@@ -16,6 +16,8 @@ import java.util.ArrayList;
  * @author Ron.Coleman
  */
 public class Dealer extends Player {
+    protected static final double INTIAL_CREDIT = 10000;
+    
     protected ArrayList<Player> players = Config.getInstance().players; 
     protected Shoe shoe;
     protected Boolean interactive = true;
@@ -25,7 +27,7 @@ public class Dealer extends Player {
         
         this.shoe = new Shoe(config.numDecks);
         
-        this.bankroll = 10000;
+        this.bankroll = INTIAL_CREDIT;
         
         if(config.numGames >= 1000)
             interactive = false;
@@ -38,17 +40,19 @@ public class Dealer extends Player {
     }
     
     public void go() {  
+        log(">>>> ENTERING CASINO");
+        
         // Let players know who dealer is to report earnings & loses
         players.stream().forEach((player) -> {
             player.makeDealer(this);
+            player.fund();
         });
-
-        // Add dealer as last player's turn
-        players.add(dealer = this);
+        
+        dealer = this;
         
         int numGames = Config.getInstance().numGames;
-        
-        for(int game=0; numGames < 1000; game++) {
+
+        for(int game=0; game < numGames; game++) {
                                 
             log(">>>> GAME "+game+" STARTING");
 
@@ -56,6 +60,8 @@ public class Dealer extends Player {
             
             log(">>>> GAME "+game+" OVER");
         }
+        
+        log(">>>> LEAVING CASINO");
     }
     
     protected void play() {
@@ -94,7 +100,7 @@ public class Dealer extends Player {
                                     
                 log(player + " LOSES!");
                 
-                numPlayers++;
+                numPlayers--;
             }
             
             // If only only one player left (the dealer!), close game
@@ -106,6 +112,14 @@ public class Dealer extends Player {
         
         // Report dealer outcome
         log(dealer + "");
+    }
+
+    public void openGame() {
+        for(Player player: players) {
+            player.reset();            
+        }
+        
+        dealInitial();
     }
     
     protected void closeGame(int numPlayers) {
@@ -210,14 +224,6 @@ public class Dealer extends Player {
             p.dealt(player, card);
         }
     }
-
-    public void openGame() {
-        for(Player player: players) {
-            player.reset();
-        }
-        
-        dealInitial();
-    }
     
     @Override
     public void reset() {
@@ -227,6 +233,10 @@ public class Dealer extends Player {
             player.reshuffling(yes);
         
         hand.clear();
+        
+        aces = 0;
+        
+        handValue = 0;
     }
     
     @Override
@@ -240,6 +250,13 @@ public class Dealer extends Player {
     
     public void loses(double amt) {
         bankroll -= amt;
+        
+        assert(bankroll > 0);
+    }
+    
+    @Override
+    public void fund() {
+        bankroll = INTIAL_CREDIT;
     }
     
     public void log(String msg) {

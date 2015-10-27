@@ -9,7 +9,7 @@ import gattaca.util.Config;
 public class GA {       
     public static void main(String[] args) {      
         // Create an initial population
-        int popSize = Config.getInstance().popSize;
+        int popSize = Config.getInstance("gattaca.json").popSize;
         
         Population population = new Population(popSize, true);
         
@@ -23,7 +23,12 @@ public class GA {
             
             double mlr = population.getMaxLikenessRatio();
             
-            System.out.printf("Generation: %2d fittest: %5.1f entrypy: %3.1f bits  mlr: %3.2f\n",generationCount,population.getFittest().getFitness(),entropy,mlr);
+            Individual fittest = population.getFittest();
+            
+            double fitness = fittest.getFitness();
+            
+            System.out.printf("Generation: %2d fittest: %5.1f entrypy: %3.1f bits  mlr: %3.2f\n",generationCount,fitness,entropy,mlr);
+                        
             population = Algorithm.evolvePopulation(population);
         }
         

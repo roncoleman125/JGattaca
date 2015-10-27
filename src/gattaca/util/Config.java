@@ -19,6 +19,7 @@
  */
 package gattaca.util;
 
+import gattaca.blackjack.player.Dealer;
 import gattaca.objective.IObjective;
 import gattaca.blackjack.player.Player;
 import gattaca.convergence.Terminator;
@@ -63,6 +64,8 @@ public class Config {
     public IObjective objective = null;
     
     public Terminator terminator = null;
+    
+    public Dealer dealer = null;
     
     /** This one and only configuration */
     protected static Config config;
@@ -125,6 +128,11 @@ public class Config {
                 
                 config.players.add(player);
             }
+            
+            className = (String) json.get("dealer");
+            config.dealer = (Dealer) Class.forName(className).newInstance(); 
+            
+            config.players.add(config.dealer);
             
             return config;
             

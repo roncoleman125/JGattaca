@@ -1,12 +1,13 @@
 {
     "numDecks": 6,
-    "numGames": 20,
-    "popSize": 50,
+    "numGames": 2,
+    "popSize": 3,
     "alleles": "SHD",
     "debug": true,
-    "objective": "gattaca.objective.FourRule",
+    "objective": "gattaca.objective.GASimpleBasicStrategy",
     "terminator": "gattaca.convergence.Likeness",
+    "dealer": "gattaca.blackjack.player.Dealer",
     "players": [
-        { "player": "gattaca.blackjack.player.GASimpleBasicStrategy"}
+        { "player": "gattaca.blackjack.player.GASimpleBasicStrategyPlayer"}
     ]
 }
