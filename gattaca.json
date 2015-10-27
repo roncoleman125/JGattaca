@@ -2,6 +2,6 @@
     "popSize": 50,
     "alleles": "01",
     "debug": true,
-    "objective": "gattaca.objective.Simple",
+    "objective": "gattaca.objective.SupervisedSimple",
     "terminator": "gattaca.convergence.Likeness"
  }

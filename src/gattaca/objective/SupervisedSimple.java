@@ -25,7 +25,7 @@ import gattaca.Individual;
  * This class is a simple demo of what the GA can do in a supervised manner.
  * @author Ron.Coleman
  */
-public class SuupervisedSimple implements IObjective {
+public class SupervisedSimple implements IObjective {
     protected String solution = "1111000000000000000000000000000000000000000000000000000000001111";
     
     /**

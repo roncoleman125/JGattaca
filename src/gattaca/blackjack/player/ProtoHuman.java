@@ -25,13 +25,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- *
+ * This class implements a proto-human interface to Blackjack.
  * @author Ron.Coleman
  */
 public class ProtoHuman extends Player {
 
     protected BufferedReader br;
 
+    /**
+     * Constructor
+     */
     public ProtoHuman() {
         br = new BufferedReader(new InputStreamReader(System.in));
     }

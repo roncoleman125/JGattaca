@@ -61,9 +61,5 @@ public class Blackjack {
         Dealer dealer = Config.getInstance("gattaca.json").dealer;;
         
         dealer.start();
-        
-        double earnings = dealer.getBankroll(0);
-        
-        System.out.println("fitness = "+earnings);
     }
 }
