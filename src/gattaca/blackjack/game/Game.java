@@ -13,12 +13,13 @@ import gattaca.util.Config;
  * @author Ron.Coleman
  */
 public class Game {
-    protected static int gameno = 0;
     public static int playerBlackjacks = 0;
     public static int playerBreaks = 0;
     public static int dealerBlackjacks = 0;
     public static int dealerBreaks = 0;
     public static int pushes = 0;
+    public static int hands = 0;
+    protected static int gameno = 0;
     public static Boolean interactive = Config.getInstance(Config.CONFIG_PATH).numGames <= 20;
     protected Dealer dealer;
 

@@ -41,7 +41,7 @@ public class Shoe {
         
         // Should really be based on the number of players? At some casinos
         // the player places the burn card. 
-        int depth = cards.size() / 4;
+        int depth = cards.size() / 3;
         
         burnIndex = cards.size() - ran.nextInt(depth);
     }

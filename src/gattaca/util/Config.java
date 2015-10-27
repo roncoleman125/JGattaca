@@ -97,12 +97,8 @@ public class Config {
         config = new Config();
         
         try {
-            // Load the parameters from the config file
+            // Load required parameters from config file
             JSONObject json = (JSONObject) parser.parse(new FileReader(path));
-            
-            config.numGames = ((Long) json.get("numGames")).intValue();
-            
-            config.numDecks = ((Long) json.get("numDecks")).intValue();
             
             config.popSize = ((Long) json.get("popSize")).intValue();
             
@@ -116,23 +112,35 @@ public class Config {
             className = (String) json.get("terminator");
             config.terminator = (Terminator) Class.forName(className).newInstance();
             
-            // Get the players
+            // Load optional Blackjack parameters
+            Object obj = json.get("numGames");
+            if(obj != null)
+                config.numGames = ((Long) obj).intValue();
+            
+            obj = json.get("numDecks");
+            if((obj != null))
+                config.numDecks = ((Long) obj).intValue();
+            
             JSONArray playersArray = (JSONArray)json.get("players");
             
-            Iterator<JSONObject> iter = playersArray.iterator();
-            
-            while(iter.hasNext()) {
-                className = (String) iter.next().get("player");
-                
-                Player player = (Player) Class.forName(className).newInstance();
-                
-                config.players.add(player);
+            if (playersArray != null) {
+                Iterator<JSONObject> iter = playersArray.iterator();
+
+                while (iter.hasNext()) {
+                    className = (String) iter.next().get("player");
+
+                    Player player = (Player) Class.forName(className).newInstance();
+
+                    config.players.add(player);
+                }
             }
             
             className = (String) json.get("dealer");
-            config.dealer = (Dealer) Class.forName(className).newInstance(); 
-            
-            config.players.add(config.dealer);
+            if (className != null) {
+                config.dealer = (Dealer) Class.forName(className).newInstance();
+
+                config.players.add(config.dealer);
+            }
             
             return config;
             
