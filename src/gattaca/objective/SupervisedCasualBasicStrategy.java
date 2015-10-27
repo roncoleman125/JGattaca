@@ -56,4 +56,13 @@ public class SupervisedCasualBasicStrategy implements IObjective {
     public double getMaxFitness() {
         return solution.length();
     }
+    
+    /**
+     * Gets the alleles
+     * @return String
+     */
+    @Override
+    public String getAlleles() {
+        return "SHD";
+    }
 }

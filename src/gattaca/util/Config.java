@@ -57,8 +57,8 @@ public class Config {
     /** GA population size */
     public int popSize;
     
-    /** Alleles for GA */
-    public String alleles = null;
+//    /** Alleles for GA */
+//    public String alleles = null;
     
     /** Debugging state in the config file */
     public Boolean isDebugging = false;
@@ -107,7 +107,7 @@ public class Config {
             
             config.popSize = ((Long) json.get("popSize")).intValue();
             
-            config.alleles = (String) json.get("alleles");
+//            config.alleles = (String) json.get("alleles");
             
             config.isDebugging = (Boolean) json.get("debug");
 

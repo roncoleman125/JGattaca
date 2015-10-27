@@ -105,7 +105,7 @@ public class Individual {
     }
     
     public static char getRandomAllele() {
-        String alleles = Config.getInstance().alleles;
+        String alleles = Config.getInstance().objective.getAlleles();
         
         char gene = alleles.charAt(ran.nextInt(alleles.length()));
         

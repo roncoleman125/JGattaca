@@ -64,4 +64,12 @@ public class GACasualBasicStrategy implements IObjective {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    /**
+     * Gets the alleles
+     * @return String
+     */
+    @Override
+    public String getAlleles() {
+        return "SHD";
+    }
 }

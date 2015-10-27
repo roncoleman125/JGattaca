@@ -45,4 +45,10 @@ public interface IObjective {
      * @return Double
      */
     public double getMaxFitness();
+    
+    /**
+     * Gets the alleles
+     * @return String
+     */
+    public String getAlleles();
 }
